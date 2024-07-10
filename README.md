@@ -70,7 +70,7 @@ Below is the an outline of the folder structure within this repository with desc
   ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
   <p align="center"> 
-  <img src="images/Figure2.pdf" alt="Monitoring setup" >
+  <img src="images/Figure2.png" alt="Monitoring setup" >
   </p>
   <p align="center"> 
   </p>
