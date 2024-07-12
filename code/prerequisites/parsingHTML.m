@@ -1,5 +1,5 @@
 % Load the KLT-IV generated outputs in html format
-function [obsLevel, obsQ, obsVelocity, obdDT] = parsingHTML(pathIn,q_path)
+function [obsLevel, obsQ, obsVelocity, obsDT] = parsingHTML(pathIn,q_path)
 
 listing = dir(q_path);
 for a = 1:length(listing)

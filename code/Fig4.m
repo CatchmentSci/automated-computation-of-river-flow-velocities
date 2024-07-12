@@ -26,9 +26,9 @@ addpath(genpath(pathIn));
 % if you want to extract the data from each of the html discharge report
 % files, set parseData as 1, otherwise leave as 0 to simply use the summary
 % csv file (quicker)
-parseData   = 1;
+parseData   = 0;
 if parseData == 1
-    [obsLevel, obsQ, obsVelocity, obdDT] = parsingHTML(pathIn, q_path);
+    [obsLevel, obsQ, obsVelocity, obsDT] = parsingHTML(pathIn, q_path);
 else
     KLTin        = [pathIn 'Combined_out.csv'];
     dataIn_      = readtext(KLTin,',', '','','textual');
@@ -162,8 +162,12 @@ for a = 1:3
         minVal(aa,1)    = temp(forensicCells(aa),idx);
         refQ(aa,1)      = temp2(forensicCells(aa));
         video_analyse(aa,1) = time1(forensicCells(aa),idx);
-        fileimportname{aa,1} = ['devon_dart' datestr(datenum(video_analyse(aa,1),'dd/mm/yyyy HH:MM'),'yyyymmdd_HHMM') '0_discharge_summary_report.html' ];
 
+        if isa(video_analyse(aa,1),'double')
+            fileimportname{aa,1} = ['devon_dart' datestr(video_analyse(aa,1),'yyyymmdd_HHMM') '0_discharge_summary_report.html' ];
+        else
+            fileimportname{aa,1} = ['devon_dart' datestr(datenum(video_analyse(aa,1),'dd/mm/yyyy HH:MM'),'yyyymmdd_HHMM') '0_discharge_summary_report.html' ];
+        end
 
         % bring in the data from the html file
         htmlIn = [q_path ...
@@ -188,10 +192,10 @@ for a = 1:3
         fr_Val      = cellfun(@(x) str2double(x(1:end - 6)), tVal);
 
 
-        obsLevel     = str2double(dataIn_(2:end,2));
-        obsQ         = str2double(dataIn_(2:end,4:6));
-        obsVelocity  = str2double(dataIn_(2:end,3));
-        obsDT        = dataIn_(2:end,1);
+        %obsLevel     = str2double(dataIn_(2:end,2));
+        %obsQ         = str2double(dataIn_(2:end,4:6));
+        %obsVelocity  = str2double(dataIn_(2:end,3));
+        %obsDT        = dataIn_(2:end,1);
 
     end
 
