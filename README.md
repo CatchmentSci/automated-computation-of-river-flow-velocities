@@ -29,7 +29,7 @@ This repository contains scripts used to generate the Figures presented in the r
 <!-- PREREQUISITES -->
 <h2 id="prerequisites"> :fork_and_knife: Prerequisites</h2>
 
-**Replicating the outputs** presented in `Unsupervised image velocimetry for automated computation of river flow velocities' requires the user to download the data files from: https://data.ncl.ac.uk/articles/dataset/User%20input%20files/19762027, the code from this GitHub repository, and to be able to run MATLAB 2019a onwards. 
+**Replicating the outputs** presented in `Unsupervised image velocimetry for automated computation of river flow velocities' requires the user to download the data files from: [https://data.ncl.ac.uk/articles/dataset/User%20input%20files/19762027](https://data.ncl.ac.uk/articles/dataset/User_input_files_for_River_Dart_image_velocimetry_analysis/19762027), the code from this GitHub repository, and to be able to run MATLAB 2019a onwards. 
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
