@@ -29,7 +29,7 @@ This repository contains scripts used to generate the Figures presented in the r
 <!-- PREREQUISITES -->
 <h2 id="prerequisites"> :fork_and_knife: Prerequisites</h2>
 
-**Replicating the outputs** presented in `Unsupervised image velocimetry for automated computation of river flow velocities' requires the user to download the data files from: [https://data.ncl.ac.uk/articles/dataset/User%20input%20files/19762027](https://data.ncl.ac.uk/articles/dataset/User_input_files_for_River_Dart_image_velocimetry_analysis/19762027), the code from this GitHub repository, and to be able to run MATLAB 2019a onwards. 
+**Replicating the outputs** presented in `Unsupervised image velocimetry for automated computation of river flow velocities' requires the user to download the data files from: [here](https://data.ncl.ac.uk/articles/dataset/User_input_files_for_River_Dart_image_velocimetry_analysis/19762027), the code from this GitHub repository, and to be able to run MATLAB 2019a onwards. 
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png)
 
@@ -58,7 +58,7 @@ Below is the an outline of the folder structure within this repository with desc
 <p align="justify"> 
     
 * Clone or download this repository so that it is accessible on your PC.
-* Download the files from: [https://data.ncl.ac.uk/articles/dataset/User%20input%20files/19762027](https://data.ncl.ac.uk/articles/dataset/User_input_files_for_River_Dart_image_velocimetry_analysis/19762027) to your PC.  
+* Download the files from: [here](https://data.ncl.ac.uk/articles/dataset/User_input_files_for_River_Dart_image_velocimetry_analysis/19762027) to your PC.  
 * Open MATLAB on your PC.
 * To generate Figure 4, ensure all scripts in "fig4" and "prerequisites" subfolders are accesible in your MATLAB search path, execute "fig4.m", ensuring that you provide the links to the directories containing the relevant datasets (downloaded from link above).
 * To generate Figure 5, ensure all scripts in "fig5" and "prerequisites" subfolders are accesible in your MATLAB search path, execute "fig5.m", ensuring that you provide the links to the directories containing the relevant datasets (downloaded from link above).
