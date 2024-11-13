@@ -1,8 +1,8 @@
 % Initial code used to reproduce Figure 8 of the paper `Unsupervised image
 % velocimetry for automated computation of river flow velocities'. Data
-% required to produced this plot can be accessed at: 
+% required to produced this plot can be accessed at:
 % https://data.ncl.ac.uk/articles/dataset/User input files/19762027.
-% The user also needs to download readtext.m and parsing_html.m from the 
+% The user also needs to download readtext.m and parsing_html.m from the
 % GitHub pages and have these files accessible on the MATLAB path.
 
 clear all; close all; clc;
@@ -27,7 +27,7 @@ addpath(genpath(pathIn));
 % files, set parseData as 1, otherwise leave as 0 to simply use the summary
 % csv file (quicker)
 parseData   = 0;
-if parseData == 1 
+if parseData == 1
     [obsLevel, obsQ, obsVelocity, obdDT] = parsingHTML(pathIn, q_path);
 else
     KLTin        = [pathIn 'Combined_out.csv'];
@@ -106,14 +106,14 @@ comp_q(:,3) = transpose(nanmedian(replace_num(q3,0,NaN)'));
 xData = validationDischarge./totalArea_init;
 yData = replace_num(compV,0,NaN);
 
-%%    
+%%
 
 f0=figure(1); hold on;
 f0.Units='pixels';
-%set(f0,'Position',[100, 0, 2480./2, 3508./2]); % A4 aspect ratio
+set(f0,'Position',[100, 0, 2480./2, 3508./2]); % A4 aspect ratio
 f0.Units='normalized';
-ax1 = gca();
-%ax1 = subplot(2,1,1);
+%ax1 = gca();
+ax1 = subplot(1,2,1);
 set(ax1,'fontsize', 12)
 pbaspect([1 1 1])
 axis tight
@@ -123,7 +123,7 @@ set(ax1,'TickLabelInterpreter','latex')
 % Using level versus reference q
 comparison(:,1) = (validationLevel_t);
 comparison(:,2) = validationDischarge;
-[xData,yData]   = prepareCurveData(comparison(:,1),comparison(:,2)); 
+[xData,yData]   = prepareCurveData(comparison(:,1),comparison(:,2));
 scatter(yData,xData,...
     'MarkerEdgeColor', [0.5,0.5,0.5],...
     'MarkerFaceColor', [0.5,0.5,0.5],...
@@ -141,13 +141,31 @@ scatter(yData,xData,...
 
 %Calculate the summary stats for when using the Fr output
 simData = [1:length(validationDischarge);...
-    (comp_q_v(:,3).*totalArea_init)']'; 
+    (comp_q_v(:,3).*totalArea_init)']';
+fr_use = simData;
 obsData = [1:length(validationDischarge);...
     validationDischarge']';
 idx_use = ~isnan(simData(:,2));
 
 % Calculate NSE
-[fr_n_out] = nashsutcliffe(obsData(idx_use,1:2), simData(idx_use,1:2));
+[fr_n_out] = nashsutcliffe(obsData(idx_use,1:2), simData(idx_use,1:2)); % not appropriate
+
+% Calculate r2 instead
+mdl = fitlm(obsData(idx_use,2), simData(idx_use,2));
+fr_r2  = mdl.Rsquared.Ordinary;
+
+% Predicted values assuming intercept = 0 and slope = 1
+y_pred = obsData(idx_use,2);
+
+% Sum of squared residuals
+SS_res = sum((simData(idx_use,2) - y_pred).^2);
+
+% Total sum of squares
+y_mean = mean(simData(idx_use,2));
+SS_tot = sum((simData(idx_use,2) - y_mean).^2);
+
+% R-squared calculation
+fr_r2_constrained = 1 - (SS_res / SS_tot);
 
 % Calculate RMSE
 simulatedData  = simData(idx_use,2) ;
@@ -165,23 +183,69 @@ temp1 = replace_num(compV,0,NaN);
 temp2 = nanmedian(temp1')';
 comparison(:,2) = (0.017652+0.84506.*temp2).*totalArea_init;
 perDiff(:,2)    = ((comparison(:,2) - validationDischarge)./validationDischarge).*100;
-[xData,yData]   = prepareCurveData(comparison(:,1),comparison(:,2)); 
+[xData,yData]   = prepareCurveData(comparison(:,1),comparison(:,2));
 
 scatter(yData,xData,...
     'MarkerEdgeColor', [145,191,219]./255,...
     'MarkerFaceColor', [145,191,219]./255,...
     'SizeData', 20); hold on;
 
-%Calculate the summary stats for when using the Distributed index output
+set(gca,'xlim',[0 162]);
+set(gca,'ylim',[0 2.5]);
+daspect([max(xlim)/max(ylim) 1 1]);
 
+set(ax1,'TickLabelInterpreter','latex')
+ylabel('$\textnormal{Stage [m]}$','Interpreter','LaTex');
+set(ax1,'fontsize', 12)
+xlabel('$\textnormal{Discharge [m\textsuperscript{3} s\textsuperscript{-1}]}$','Interpreter','LaTex');
+set(ax1,'Box','on')
+
+l1 = legend('Reference measurements', 'Constant Froude', 'Index approach',...
+    'location', 'northwest',...
+    'Interpreter','latex',...
+    'fontsize', 11);
+legend boxoff
+set(l1,'Position', [get(l1,'Position')] - [0.01 0 0 0]  )
+
+annotationText1 =  {'[A]'};
+annotation(f0,'textbox',...
+    [0.085677419354839 0.623147092360321 0.0264193548387096 0.0193842645381985],...
+    'String',{char(annotationText1)} ,...
+    'FitBoxToText','on',...
+    'Interpreter','LaTex',...
+    'LineStyle', 'none',...
+    'fontsize', 12);
+
+
+
+%Calculate the summary stats for when using the Distributed index output
 simData = [1:length(validationDischarge);...
     comparison(:,2)']';
+dist_use = simData;
 obsData = [1:length(validationDischarge);...
     validationDischarge']';
 idx_use = ~isnan(comparison(:,2));
 
 % Calculate NSE
-[dist_n_out] = nashsutcliffe(obsData(idx_use,1:2), simData(idx_use,1:2));
+[dist_n_out] = nashsutcliffe(obsData(idx_use,1:2), simData(idx_use,1:2)); % not appropriate
+
+% Calculate r2 instead
+mdl      = fitlm(obsData(idx_use,2), simData(idx_use,2));
+dist_r2  = mdl.Rsquared.Ordinary;
+
+% Predicted values assuming intercept = 0 and slope = 1
+y_pred = obsData(idx_use,2);
+
+% Sum of squared residuals
+SS_res = sum((simData(idx_use,2) - y_pred).^2);
+
+% Total sum of squares
+y_mean = mean(simData(idx_use,2));
+SS_tot = sum((simData(idx_use,2) - y_mean).^2);
+
+% R-squared calculation
+dist_r2_constrained = 1 - (SS_res / SS_tot);
+
 
 % Calculate RMSE
 simulatedData  = simData(idx_use,2) ;
@@ -193,21 +257,57 @@ sum_observed = sum(experimentalData);
 sum_difference = sum(experimentalData - simulatedData);
 pbias_dist = 100 * (sum_difference / sum_observed);
 
-% refine the plot
-set(gca,'xlim',[0 162]);
-set(gca,'ylim',[0 2.5]);
-set(ax1,'TickLabelInterpreter','latex')
-ylabel('$\textnormal{Stage [m]}$','Interpreter','LaTex');
-set(ax1,'fontsize', 12)
-xlabel('$\textnormal{Discharge [m\textsuperscript{3} s\textsuperscript{-1}]}$','Interpreter','LaTex');
-set(ax1,'Box','on')
 
-l1 = legend('Reference measurements', 'Constant Froude', 'Index approach',...
-            'location', 'northwest',...
-            'Interpreter','latex',...
-            'fontsize', 11);
-legend boxoff 
-set(l1,'Position', [get(l1,'Position')] - [0.03 0 0 0]  )
+ax2 = subplot(1,2,2);
+set(ax2,'fontsize', 12);
+pbaspect([1 1 1]);
+axis tight
+set(ax2,'TickLabelInterpreter','latex');
+temp1 = get(ax1,'xlim');
+set(ax2,'xlim', temp1);
+
+
+scatter(obsData(:,2),fr_use(:,2),...
+    'MarkerEdgeColor', [252,141,89]./255,...
+    'MarkerFaceColor',  [252,141,89]./255,...
+    'SizeData', 20); hold on;
+
+
+scatter(obsData(:,2),dist_use(:,2),...
+    'MarkerEdgeColor', [145,191,219]./255,...
+    'MarkerFaceColor', [145,191,219]./255,...
+    'SizeData', 20); hold on;
+
+plot(0:max(obsData(:,2)), 0:max(obsData(:,2)),...
+    '--',...
+    'Color', [0.5,0.5,0.5]),...
+    hold on;
+
+axis equal
+set(gca,'xlim',[0 162]);
+set(gca,'ylim',[0 162]);
+
+set(ax2,'TickLabelInterpreter','latex')
+xlabel('$\textnormal{Reference Discharge [m\textsuperscript{3} s\textsuperscript{-1}]}$','Interpreter','LaTex');
+ylabel('$\textnormal{Image-based Discharge [m\textsuperscript{3} s\textsuperscript{-1}]}$','Interpreter','LaTex');
+set(ax2,'fontsize', 12)
+set(ax2,'Box','on')
+yticks(xticks);
+
+pos = get(ax2, 'Position'); % Get current position
+set(ax2, 'Position', [pos(1)-0.03, pos(2), pos(3), pos(4)]); % Adjust position
+
+annotationText2 =  {'[B]'};
+annotation(f0,'textbox',...
+    [0.489709677419355 0.623147092360321 0.0264193548387096 0.0193842645381985],...
+    'String',{char(annotationText2)} ,...
+    'FitBoxToText','on',...
+    'Interpreter','LaTex',...
+    'LineStyle', 'none',...
+    'fontsize', 12);
+
+
+
 
 %% Export the outputs
 outDir    = [pathOut 'figure8.svg'];
