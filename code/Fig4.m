@@ -78,6 +78,8 @@ for a = 1:length(validationLevel)
     for c = 1
         FieldName                           = ['time' num2str(c)];
         timeQ.(FieldName)(a,1:length(idx))  = obsDT(idx,c);
+        FieldName1                           = ['time_num'];
+        timeQ.(FieldName1)(a,1:length(idx))  = datenum(obsDT(idx,c), 'dd/mm/yyyy HH:MM');        
     end
 
 end
@@ -276,3 +278,73 @@ end
 outDir    = [pathOut 'Fig4.svg'];
 saveas(f0,outDir,'svg');
 
+% this section deals with the temporal variability of reconstructions for a
+% given flow stage. Four randomly selected stages are chosen and the
+% Q estimates across the experimental period are plotted.
+reviewer_test = 0;
+if reviewer_test == 1
+
+    f0 = figure();
+    set(f0, 'Position', [ 1000         425         961         813]  )
+    hold on;
+    testing_idx = [102, 38, 76, 95];
+    timeQ.time_num = replace_num(timeQ.time_num,0,NaN);
+
+    for a = 1:4
+
+        nexttile
+        hold on;
+        pbaspect([1 1 1])
+        ax = gca();
+
+        set(ax,'fontsize', 12)
+        set(ax,'TickLabelInterpreter','latex')
+        %axis tight
+
+        scatter(timeQ.time_num(testing_idx(a),:), compQ.q3(testing_idx(a),:), '+k' );
+
+        xlim([min(timeQ.time_num(:)) max(timeQ.time_num(:))])
+        lims = xlim;
+        datetick('x', 'mmm yy')
+        xticks(lims(1) :(lims(2) - lims(1))./5: lims(2)    )
+        xlabel('Date','Interpreter','LaTex');
+        ylabel('$\mathrm{Q \ [m^{3} \ s^{-1}]}$','Interpreter','LaTex');
+
+
+        annotation(f0,'textbox',...
+            [0.0900915712799173 0.90218992791082 0.0432420794240754 0.0359163588116823],...
+            'String','A)' ,...
+            'FitBoxToText','on',...
+            'Interpreter','LaTex',...
+            'LineStyle', 'none',...
+            'fontsize', 12);
+
+        annotation(f0,'textbox',...
+            [0.544826222684706 0.907109977111312 0.0432420794240754 0.0359163588116823],...
+            'String','B)' ,...
+            'FitBoxToText','on',...
+            'Interpreter','LaTex',...
+            'LineStyle', 'none',...
+            'fontsize', 12);
+
+        annotation(f0,'textbox',...
+            [0.0900915712799173 0.42248513086285 0.0432420794240754 0.0359163588116823],...
+            'String','C)' ,...
+            'FitBoxToText','on',...
+            'Interpreter','LaTex',...
+            'LineStyle', 'none',...
+            'fontsize', 12);
+
+        annotation(f0,'textbox',...
+            [0.544826222684706 0.42248513086285 0.0432420794240754 0.0359163588116823],...
+            'String','D)' ,...
+            'FitBoxToText','on',...
+            'Interpreter','LaTex',...
+            'LineStyle', 'none',...
+            'fontsize', 12);
+    end
+
+
+    outDir    = ['D:\OneDrive - Newcastle University\Documents - TENDERLY Archive [Geog]\General\Archive_Dart\Paper Drafts\Reviewers_comments_2025_v1\discharge_test.png'];
+    exportgraphics(f0,outDir,'Resolution',600, 'BackgroundColor','none')
+end
